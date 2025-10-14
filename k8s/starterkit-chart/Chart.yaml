@@ -1,0 +1,16 @@
+apiVersion: v2
+name: starterkit
+description: A Helm chart for the starterkit application
+type: application
+version: 0.1.0
+appVersion: "latest"
+keywords:
+  - starterkit
+  - web
+  - application
+home: https://github.com/rogelioii/starterkit
+sources:
+  - https://github.com/rogelioii/starterkit
+maintainers:
+  - name: rogelioii
+    email: rogelioii@example.com
