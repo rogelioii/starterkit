@@ -108,3 +108,8 @@ celerybeat.pid
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Terraform
+terraform/.terraform/
+# this is derived from the terraform.tfvars.example file
+terraform/terraform.tfvars 
