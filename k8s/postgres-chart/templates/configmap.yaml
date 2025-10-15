@@ -1,0 +1,18 @@
+{{- if .Values.configMap.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgres-chart.fullname" . }}-config
+  labels:
+    {{- include "postgres-chart.labels" . | nindent 4 }}
+  {{- with .Values.configMap.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  postgresql.conf: |
+    # PostgreSQL configuration
+    {{- range $key, $value := .Values.postgresql.postgresqlConf }}
+    {{ $key }} = {{ $value }}
+    {{- end }}
+{{- end }}

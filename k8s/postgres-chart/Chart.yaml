@@ -1,0 +1,16 @@
+apiVersion: v2
+name: postgres-chart
+description: A Helm chart for PostgreSQL database
+type: application
+version: 0.1.0
+appVersion: "15-alpine"
+keywords:
+  - postgresql
+  - database
+  - sql
+home: https://www.postgresql.org/
+sources:
+  - https://github.com/postgres/postgres
+maintainers:
+  - name: StarterKit Team
+    email: team@starterkit.com

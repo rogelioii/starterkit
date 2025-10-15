@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/starterkit
+    url: jdbc:postgresql://my-postgres-postgres-chart.default.svc.cluster.local:5432/starterkit
     username: starterkit
     password: starterkit123
   jpa:
