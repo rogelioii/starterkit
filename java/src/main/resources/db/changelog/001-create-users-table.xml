@@ -1,0 +1,9 @@
+<changeSet id="1" author="you">
+    <createTable tableName="users">
+        <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="email" type="varchar(255)"/>
+        <column name="created_at" type="timestamp"/>
+    </createTable>
+</changeSet>

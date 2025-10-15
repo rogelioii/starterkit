@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/starterkit
+    username: starterkit
+    password: starterkit123
+  jpa:
+    hibernate:
+      ddl-auto: none  # IMPORTANT: Disable auto schema generation
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
