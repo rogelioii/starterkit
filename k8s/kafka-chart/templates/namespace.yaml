@@ -1,0 +1,11 @@
+{{- if false }}
+# Namespace creation is handled by Helm --create-namespace flag
+# This template is kept for reference but disabled
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "kafka-chart.namespace" . }}
+  labels:
+    {{- include "kafka-chart.labels" . | nindent 4 }}
+    name: {{ include "kafka-chart.namespace" . }}
+{{- end }}

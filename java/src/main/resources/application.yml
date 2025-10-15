@@ -1,3 +1,6 @@
+server:
+  port: 80
+
 spring:
   datasource:
     url: jdbc:postgresql://my-postgres-postgres-chart.default.svc.cluster.local:5432/starterkit

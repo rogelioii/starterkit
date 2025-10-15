@@ -1,0 +1,150 @@
+# Default values for kafka-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Namespace configuration
+namespace:
+  create: true
+  name: kafka
+
+replicaCount: 1
+
+image:
+  repository: confluentinc/cp-kafka
+  pullPolicy: IfNotPresent
+  tag: "7.4.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 9092
+  headless:
+    port: 9092
+
+# Kafka Configuration
+kafka:
+  # Broker configuration
+  brokerId: 0  # Will be overridden by pod ordinal in StatefulSet
+  listeners: "PLAINTEXT://0.0.0.0:9092"
+  advertisedListeners: "PLAINTEXT://kafka-headless:9092"
+  listenerSecurityProtocolMap: "PLAINTEXT:PLAINTEXT"
+  interBrokerListenerName: "PLAINTEXT"
+  
+  # Log configuration
+  logDirs: "/var/lib/kafka/data"
+  logRetentionHours: 168  # 7 days
+  logSegmentBytes: 1073741824  # 1GB
+  logRetentionCheckIntervalMs: 300000  # 5 minutes
+  
+  # Replication configuration
+  defaultReplicationFactor: 1
+  minInsyncReplicas: 1
+  offsetsTopicReplicationFactor: 1
+  transactionStateLogReplicationFactor: 1
+  transactionStateLogMinIsr: 1
+  
+  # Performance tuning
+  numNetworkThreads: 8
+  numIoThreads: 8
+  socketSendBufferBytes: 102400
+  socketReceiveBufferBytes: 102400
+  socketRequestMaxBytes: 104857600
+  numPartitions: 3
+  defaultReplicationFactor: 3
+  minInsyncReplicas: 2
+  
+  # Topics configuration
+  topics:
+    alpha-queue:
+      partitions: 3
+      replicationFactor: 1
+      config:
+        cleanup.policy: "delete"
+        retention.ms: "604800000"  # 7 days
+        segment.ms: "604800000"    # 7 days
+    beta-queue:
+      partitions: 3
+      replicationFactor: 1
+      config:
+        cleanup.policy: "delete"
+        retention.ms: "604800000"  # 7 days
+        segment.ms: "604800000"    # 7 days
+
+# Zookeeper configuration (embedded)
+zookeeper:
+  enabled: true
+  image:
+    repository: zookeeper
+    tag: "3.7.1"
+  dataDir: "/var/lib/zookeeper/data"
+  dataLogDir: "/var/lib/zookeeper/log"
+  tickTime: 2000
+  initLimit: 10
+  syncLimit: 5
+  maxClientCnxns: 60
+  autopurgeSnapRetainCount: 3
+  autopurgePurgeInterval: 24
+
+# Persistence configuration
+persistence:
+  enabled: false  # Disable persistence for testing
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+
+# Resource limits
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Monitoring
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s

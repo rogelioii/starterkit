@@ -1,0 +1,158 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kafka-chart.fullname" . }}-zookeeper
+  namespace: {{ include "kafka-chart.namespace" . }}
+  labels:
+    {{- include "kafka-chart.labels" . | nindent 4 }}
+    component: zookeeper
+spec:
+  serviceName: {{ include "kafka-chart.fullname" . }}-zookeeper-headless
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kafka-chart.selectorLabels" . | nindent 6 }}
+      component: zookeeper
+  template:
+    metadata:
+      labels:
+        {{- include "kafka-chart.selectorLabels" . | nindent 8 }}
+        component: zookeeper
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kafka-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: zookeeper
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+          image: "{{ .Values.zookeeper.image.repository }}:{{ .Values.zookeeper.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: client
+              containerPort: 2181
+              protocol: TCP
+            - name: peer
+              containerPort: 2888
+              protocol: TCP
+            - name: leader-election
+              containerPort: 3888
+              protocol: TCP
+          env:
+            - name: ZOO_MY_ID
+              value: "1"
+            - name: ZOO_SERVERS
+              value: "server.1=0.0.0.0:2888:3888;2181"
+            - name: ZOO_TICK_TIME
+              value: "{{ .Values.zookeeper.tickTime }}"
+            - name: ZOO_INIT_LIMIT
+              value: "{{ .Values.zookeeper.initLimit }}"
+            - name: ZOO_SYNC_LIMIT
+              value: "{{ .Values.zookeeper.syncLimit }}"
+            - name: ZOO_MAX_CLIENT_CNXNS
+              value: "{{ .Values.zookeeper.maxClientCnxns }}"
+            - name: ZOO_AUTOPURGE_SNAP_RETAIN_COUNT
+              value: "{{ .Values.zookeeper.autopurgeSnapRetainCount }}"
+            - name: ZOO_AUTOPURGE_PURGE_INTERVAL
+              value: "{{ .Values.zookeeper.autopurgePurgeInterval }}"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "echo ruok | nc localhost 2181"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "echo ruok | nc localhost 2181"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: zookeeper-data
+              mountPath: /var/lib/zookeeper/data
+            - name: zookeeper-log
+              mountPath: /var/lib/zookeeper/log
+            {{- else }}
+            - name: zookeeper-data-temp
+              mountPath: /var/lib/zookeeper/data
+            - name: zookeeper-log-temp
+              mountPath: /var/lib/zookeeper/log
+            {{- end }}
+      {{- if not .Values.persistence.enabled }}
+      volumes:
+        - name: zookeeper-data-temp
+          emptyDir: {}
+        - name: zookeeper-log-temp
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: zookeeper-data
+      labels:
+        {{- include "kafka-chart.labels" . | nindent 8 }}
+        component: zookeeper
+      {{- with .Values.persistence.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      accessModes:
+        - {{ .Values.persistence.accessMode }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
+      {{- if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass }}
+      {{- end }}
+  - metadata:
+      name: zookeeper-log
+      labels:
+        {{- include "kafka-chart.labels" . | nindent 8 }}
+        component: zookeeper
+      {{- with .Values.persistence.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      accessModes:
+        - {{ .Values.persistence.accessMode }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
+      {{- if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass }}
+      {{- end }}
+  {{- end }}

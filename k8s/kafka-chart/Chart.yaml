@@ -1,0 +1,18 @@
+apiVersion: v2
+name: kafka-chart
+description: A Helm chart for Apache Kafka with Alpha and Beta queues
+type: application
+version: 0.1.0
+appVersion: "3.6.0"
+keywords:
+  - kafka
+  - messaging
+  - queue
+  - streaming
+home: https://kafka.apache.org/
+sources:
+  - https://github.com/apache/kafka
+maintainers:
+  - name: starterkit-team
+    email: team@starterkit.com
+dependencies: []
