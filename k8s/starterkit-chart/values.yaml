@@ -19,11 +19,48 @@ serviceAccount:
   create: true
   # Annotations to add to the service account
   annotations: {}
+    # eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<IAM_ROLE_NAME>
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: ""    
 
 podAnnotations: {}
+  # -- Monitoring / Prometheus --
+  # prometheus.io/scrape: "true"
+  # prometheus.io/port: "8080"
+  # prometheus.io/path: "/metrics"
+
+  # -- AWS IRSA (IAM Role for Service Accounts) --
+  # eks.amazonaws.com/role-arn: arn:aws:iam::<account_id>:role/<role-name>
+
+  # -- AppArmor / Seccomp --
+  # container.apparmor.security.beta.kubernetes.io/<container>: localhost/<profile>
+  # seccomp.security.alpha.kubernetes.io/pod: runtime/default
+
+  # -- Service Mesh (Istio / Linkerd) --
+  # sidecar.istio.io/inject: "true"
+  # traffic.sidecar.istio.io/includeInboundPorts: "8080,9090"
+  # linkerd.io/inject: enabled
+
+  # -- Logging / Fluent Bit / ELK / Elastic Agent --
+  # fluentbit.io/tag: "app.logs"
+  # log-format: "json"
+  # co.elastic.logs/enabled: "true"
+
+  # -- Network Bandwidth Hints --
+  # kubernetes.io/ingress-bandwidth: 1M
+  # kubernetes.io/egress-bandwidth: 1M
+
+  # -- Autoscaling / Eviction / Scheduling --
+  # cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+  # scheduler.alpha.kubernetes.io/critical-pod: ""
+
+  # -- Config/Secret Auto Reloaders --
+  # reloader.stakater.com/match: "true"
+
+  # -- HashiCorp Vault Agent Injection --
+  # vault.hashicorp.com/agent-inject: "true"
+
 
 podSecurityContext: {}
   # fsGroup: 2000
