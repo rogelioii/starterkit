@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kafka-ui-chart.fullname" . }}
+  namespace: {{ include "kafka-ui-chart.namespace" . }}
+  labels:
+    {{- include "kafka-ui-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "kafka-ui-chart.selectorLabels" . | nindent 4 }}

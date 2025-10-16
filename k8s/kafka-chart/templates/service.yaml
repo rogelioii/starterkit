@@ -12,6 +12,10 @@ spec:
       targetPort: 9092
       protocol: TCP
       name: kafka
+    - port: 9093
+      targetPort: 9093
+      protocol: TCP
+      name: kafka-external
   selector:
     {{- include "kafka-chart.selectorLabels" . | nindent 4 }}
 ---
@@ -30,5 +34,9 @@ spec:
       targetPort: 9092
       protocol: TCP
       name: kafka
+    - port: 9093
+      targetPort: 9093
+      protocol: TCP
+      name: kafka-external
   selector:
     {{- include "kafka-chart.selectorLabels" . | nindent 4 }}

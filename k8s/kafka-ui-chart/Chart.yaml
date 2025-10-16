@@ -1,0 +1,15 @@
+apiVersion: v2
+name: kafka-ui-chart
+description: A Helm chart for Kafka UI
+type: application
+version: 0.1.0
+appVersion: "0.7.1"
+keywords:
+  - kafka
+  - ui
+  - web
+home: https://github.com/provectus/kafka-ui
+sources:
+  - https://github.com/provectus/kafka-ui
+maintainers:
+  - name: starterkit
